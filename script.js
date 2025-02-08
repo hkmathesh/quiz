@@ -16,7 +16,7 @@ btnStartQuiz.addEventListener('click', (event) => {
     var validate = true
 
     if (nameRegex.test(sname) == false) {
-        alert('Name must be start with alphabets')
+        alert('Name must contain only alphabets.')
         var validate = false
     }
 
