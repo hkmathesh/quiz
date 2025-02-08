@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <!-- Font family -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Tailwind CSS CDN link -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <section class="h-screen flex justify-center items-center">
+        <div class="p-10 w-1/2 shadow-2xl">
+            <!-- Timer -->
+            <p id="timer" class="text-center font-bold text-red-600 text-xl">Time Left: 5:00</p>
+
+            <div class="question" data-index="0">
+                <h1 class="text-3xl font-medium">1. What does HTML stand for?</h1>
+                <input type="radio" name="que1" value="Hyperlinks and Text Markup Language"> Hyperlinks and Text Markup
+                Language <br>
+                <input type="radio" name="que1" value="Hyper Text Markup Language"> Hyper Text Markup Language <br>
+                <input type="radio" name="que1" value="Home Tool Markup Language"> Home Tool Markup Language
+            </div>
+
+            <div class="question hidden" data-index="1">
+                <h1 class="text-3xl font-medium">2. Who is making the Web standards?</h1>
+                <input type="radio" name="que2" value="Mozilla"> Mozilla <br>
+                <input type="radio" name="que2" value="Microsoft"> Microsoft <br>
+                <input type="radio" name="que2" value="Google"> Google <br>
+                <input type="radio" name="que2" value="The World Wide Web Consortium"> The World Wide Web Consortium
+            </div>
+
+            <div class="question hidden" data-index="2">
+                <h1 class="text-3xl font-medium">3. Which character is used to indicate an end tag?</h1>
+                <input type="radio" name="que3" value="/"> / <br>
+                <input type="radio" name="que3" value="*"> * <br>
+                <input type="radio" name="que3" value="^"> ^ <br>
+                <input type="radio" name="que3" value=">"> >
+            </div>
+
+            <div class="question hidden" data-index="3">
+                <h1 class="text-3xl font-medium">4. HTML program is saved using _________ extension.</h1>
+                <input type="radio" name="que4" value=".htl"> .htl <br>
+                <input type="radio" name="que4" value=".html"> .html <br>
+                <input type="radio" name="que4" value=".hml"> .hml <br>
+                <input type="radio" name="que4" value=".htlm"> .htlm
+            </div>
+
+            <div class="question hidden" data-index="4">
+                <h1 class="text-3xl font-medium">5. Which of the following is used to increase the column width?</h1>
+                <input type="radio" name="que5" value="Cell spacing"> Cell spacing <br>
+                <input type="radio" name="que5" value="Cell padding"> Cell padding <br>
+                <input type="radio" name="que5" value="Row span"> Row span <br>
+                <input type="radio" name="que5" value="Col span"> Col span
+            </div>
+
+            <div class="flex justify-between mt-4">
+                <button id="prevBtn" class="bg-gray-500 text-white px-4 py-2 rounded">Previous</button>
+                <button id="nextBtn" class="bg-blue-500 text-white px-4 py-2 rounded">Next</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const questions = document.querySelectorAll(".question");
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
+            const timerDisplay = document.getElementById("timer");
+            let currentQuestion = 0;
+            let score = 0;
+            let timeLeft = 300; // 5 minutes (300 seconds)
+
+            // Correct Answers
+            const correctAnswers = {
+                "que1": "Hyper Text Markup Language",
+                "que2": "The World Wide Web Consortium",
+                "que3": "/",
+                "que4": ".html",
+                "que5": "Cell padding"
+            };
+
+            // This line of code is responsible for showing the current question while hiding the others:
+            function showQuestion(index) {
+                questions.forEach((q, i) => q.classList.toggle("hidden", i !== index));
+                
+                // Instead of hiding the button completely, make it "invisible" (keeps space occupied)
+                prevBtn.classList.toggle("invisible", index === 0);
+
+                // Change "Next" button to "Submit" on the last question
+                nextBtn.textContent = index === questions.length - 1 ? "Submit" : "Next";
+            }
+
+            function checkAnswer() {
+                const currentQuestionElement = questions[currentQuestion];
+                const selectedOption = currentQuestionElement.querySelector("input[type='radio']:checked");
+
+                if (selectedOption) {
+                    const questionName = selectedOption.name; // Get question name (e.g., "que1")
+                    const userAnswer = selectedOption.value; // Get selected value
+
+                    if (userAnswer === correctAnswers[questionName]) {
+                        score++; // Increment score if the answer is correct
+                    }
+                }
+            }
+
+            nextBtn.addEventListener("click", function () {
+                checkAnswer(); // Check answer before moving to next question
+                if (currentQuestion < questions.length - 1) {
+                    currentQuestion++;
+                    showQuestion(currentQuestion);
+                } else {
+                    endQuiz();
+                }
+            });
+
+            prevBtn.addEventListener("click", function () {
+                if (currentQuestion > 0) {
+                    currentQuestion--;
+                    showQuestion(currentQuestion);
+                }
+            });
+
+            function startTimer() {
+                const timerInterval = setInterval(function () {
+                    let minutes = Math.floor(timeLeft / 60);
+                    let seconds = timeLeft % 60;
+                    timerDisplay.textContent = `Time Left: ${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        alert("Time is up! Submitting your quiz.");
+                        endQuiz();
+                    }
+                    timeLeft--;
+                }, 1000);
+            }
+
+            function endQuiz() {
+                sessionStorage.setItem("score", score);
+                window.location.href = "score.html";
+            }
+
+            // Start timer when page loads
+            startTimer();
+
+            // Show first question initially
+            showQuestion(currentQuestion);
+        });
+    </script>
+
+</body>
+
+</html>
