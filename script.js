@@ -10,8 +10,8 @@ btnStartQuiz.addEventListener('click', (event) => {
     var nameRegex = /^[a-zA-Z]+$/
     var emailRegex = /^[a-zA-Z0-9]+@gmail\.com/
 
-    var sname = document.getElementById('sname').value;
-    var mail = document.getElementById('mail').value;
+    var sname = document.getElementById('sname').value.trim();
+    var mail = document.getElementById('mail').value.trim();
 
     var validate = true
 
