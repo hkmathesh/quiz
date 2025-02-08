@@ -79,9 +79,9 @@
             const nextBtn = document.getElementById("nextBtn");
             const timerDisplay = document.getElementById("timer");
             let currentQuestion = 0;
-            let score = 0;
             let timeLeft = 300; // 5 minutes (300 seconds)
-
+            let userAnswers = {}; // To store user's answers
+    
             // Correct Answers
             const correctAnswers = {
                 "que1": "Hyper Text Markup Language",
@@ -90,55 +90,53 @@
                 "que4": ".html",
                 "que5": "Cell padding"
             };
-
+    
             // This line of code is responsible for showing the current question while hiding the others:
             function showQuestion(index) {
                 questions.forEach((q, i) => q.classList.toggle("hidden", i !== index));
-                
+
                 // Instead of hiding the button completely, make it "invisible" (keeps space occupied)
                 prevBtn.classList.toggle("invisible", index === 0);
 
                 // Change "Next" button to "Submit" on the last question
                 nextBtn.textContent = index === questions.length - 1 ? "Submit" : "Next";
             }
-
-            function checkAnswer() {
+    
+            function storeAnswer() {
                 const currentQuestionElement = questions[currentQuestion];
                 const selectedOption = currentQuestionElement.querySelector("input[type='radio']:checked");
-
+    
                 if (selectedOption) {
-                    const questionName = selectedOption.name; // Get question name (e.g., "que1")
-                    const userAnswer = selectedOption.value; // Get selected value
-
-                    if (userAnswer === correctAnswers[questionName]) {
-                        score++; // Increment score if the answer is correct
-                    }
+                    const questionName = selectedOption.name;
+                    const userAnswer = selectedOption.value;
+                    userAnswers[questionName] = userAnswer; // Store answer (overwrite if changed)
                 }
             }
-
+    
             nextBtn.addEventListener("click", function () {
-                checkAnswer(); // Check answer before moving to next question
+                storeAnswer(); // Save answer before moving to next question
+    
                 if (currentQuestion < questions.length - 1) {
                     currentQuestion++;
                     showQuestion(currentQuestion);
                 } else {
-                    endQuiz();
+                    endQuiz(); // Submit at last question
                 }
             });
-
+    
             prevBtn.addEventListener("click", function () {
                 if (currentQuestion > 0) {
                     currentQuestion--;
                     showQuestion(currentQuestion);
                 }
             });
-
+    
             function startTimer() {
                 const timerInterval = setInterval(function () {
                     let minutes = Math.floor(timeLeft / 60);
                     let seconds = timeLeft % 60;
                     timerDisplay.textContent = `Time Left: ${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-
+    
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
                         alert("Time is up! Submitting your quiz.");
@@ -147,12 +145,18 @@
                     timeLeft--;
                 }, 1000);
             }
-
+    
             function endQuiz() {
-                sessionStorage.setItem("score", score);
+                let finalScore = 0;
+                for (const question in correctAnswers) {
+                    if (userAnswers[question] === correctAnswers[question]) {
+                        finalScore++;
+                    }
+                }
+                sessionStorage.setItem("score", finalScore);
                 window.location.href = "score.html";
             }
-
+    
             // Start timer when page loads
             startTimer();
 
@@ -160,6 +164,7 @@
             showQuestion(currentQuestion);
         });
     </script>
+    
 
 </body>
 
